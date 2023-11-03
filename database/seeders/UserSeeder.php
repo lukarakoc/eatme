@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
         [
             'name' => 'Eat.me - Matija',
             'email' => 'eatme@dmline.me',
-            'password' => 'eatmesoftware',
+            'password' => Hash::make("eatmesoftware"),
             'role_id' => Role::ADMIN
         ]);
     }
