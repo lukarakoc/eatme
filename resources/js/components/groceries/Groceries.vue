@@ -24,7 +24,7 @@
             <div class="card-body pt-2">
                 <button class="btn btn-sm btn-primary float-right mb-2 ml-1"
                         @click="openCreateModal">
-                    <i class="fas fa-plus-circle"></i> Dodaj namirnicu
+                    <i class="fas fa-plus-circle"></i> Dodaj namirnicu/proizvod
                 </button>
                 <div class="table-responsive">
                     <table id="datatable" class="table table-bordered table-striped text-center">
@@ -124,7 +124,7 @@ export default {
     },
     methods: {
         loadGroceries(page = 1) {
-            axios.get('/admin/groceries')
+            axios.get(`/admin/groceries?page=${page}`)
                 .then(response => {
                     if (response.data[0] === 'success') {
                         this.groceriesPagination = response.data[1];
@@ -196,7 +196,7 @@ export default {
     },
     mounted() {
         this.loadGroceries();
-        this.$emit('loadBreadcrumbLink', {url: '/groceries', pageName: 'Namirnice'});
+        this.$emit('loadBreadcrumbLink', {url: '/groceries', pageName: 'Namirnice i proizvodi'});
         EventBus.$on('load-groceries', () => this.loadGroceries());
     }
 }

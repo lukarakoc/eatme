@@ -4,8 +4,8 @@
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 v-show="editmode" class="modal-title" id="create-and-edit-modal-label">Izmijeni namirnicu</h5>
-                    <h5 v-show="!editmode" class="modal-title" id="create-and-edit-modal-label">Dodaj namirnicu</h5>
+                    <h5 v-show="editmode" class="modal-title" id="create-and-edit-modal-label">Izmijeni namirnicu/proizvod</h5>
+                    <h5 v-show="!editmode" class="modal-title" id="create-and-edit-modal-label">Dodaj namirnicu/proizvod</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -13,7 +13,7 @@
                 <form @submit.prevent="editmode ? updateGrocery() : storeGrocery()">
                     <div class="modal-body">
                         <div class="form-group mx-2 mt-2">
-                            <label for="name">Naziv namirnice *</label>
+                            <label for="name">Naziv namirnice/proizvoda *</label>
                             <input id="name"
                                    class="form-control"
                                    type="text"
@@ -27,7 +27,7 @@
                         </div>
                         <hr>
                         <div class="form-group mx-2 mt-2">
-                            <label for="unit_price">Cijena namirnice po KG/Kom.*</label>
+                            <label for="unit_price">Cijena namirnice/proizvoda po KG/Kom.*</label>
                             <input id="unit_price"
                                    class="form-control"
                                    type="text"
@@ -315,7 +315,7 @@ export default {
         },
         clearData() {
             this.resetGroceryFormErrors();
-            EventBus.$emit('load-groceries');
+            // EventBus.$emit('load-groceries');
         },
         checkIfNotEmpty(value) {
             return checkIfNotEmpty(value);

@@ -3,9 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Client;
-use App\Models\Sale;
-use App\Models\SaleGrocery;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class SaleSeeder extends Seeder
@@ -16,24 +13,32 @@ class SaleSeeder extends Seeder
     public function run(): void
     {
 
-        Client::create([
-            'id' => 1,
-            'name' => 'Jugopetrol'
+        Client::insert([
+            [
+                'id' => 1,
+                'name' => 'Jugopetrol AD'
+            ],
+            [
+                'id' => 2,
+                'name' => 'Lukoil Montenegro'
+            ],
+            [
+                'id' => 3,
+                'name' => 'Duty free'
+            ],
+            [
+                'id' => 4,
+                'name' => 'Petrol'
+            ],
+            [
+                'id' => 5,
+                'name' => 'Hifa Oil'
+            ],
+            [
+                'id' => 6,
+                'name' => 'Voli'
+            ]
         ]);
 
-        Sale::create([
-            'total' => 10,
-            'created_at' => now(),
-            'created_by' => 1,
-            'client_id' => 1
-        ]);
-
-        SaleGrocery::create([
-            'sale_id' => 1,
-            'grocery_id' => 1,
-            'quantity' => 10,
-            'total' => 100,
-            'unit_price' => 10
-        ]);
     }
 }

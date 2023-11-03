@@ -83,13 +83,23 @@
                     <span slot="prev-nav">Prethodna</span>
                     <span slot="next-nav">Sledeća</span>
                 </pagination>
-                <pagination v-show="!searchMode"
+                <pagination v-show="!searchMode && !filtered"
                             class="mt-2"
                             align="right"
                             show-disabled
                             :data="purchasesPagination"
                             :limit="1"
                             @pagination-change-page="loadPurchases">
+                    <span slot="prev-nav">Prethodna</span>
+                    <span slot="next-nav">Sledeća</span>
+                </pagination>
+                <pagination v-show="!searchMode && filtered"
+                            class="mt-2"
+                            align="right"
+                            show-disabled
+                            :data="purchasesPagination"
+                            :limit="1"
+                            @pagination-change-page="loadFiltered">
                     <span slot="prev-nav">Prethodna</span>
                     <span slot="next-nav">Sledeća</span>
                 </pagination>
@@ -119,6 +129,7 @@ export default {
             endDate: '',
             pageIsLoading: true,
             searchMode: false,
+            filtered: false,
             searchKeyword: '',
             purchases: [],
             purchasesPagination: {}
@@ -126,7 +137,7 @@ export default {
     },
     methods: {
         loadPurchases(page = 1) {
-            axios.get('/admin/purchases')
+            axios.get(`/admin/purchases?page=${page}`)
                 .then(response => {
                     if (response.data[0] === 'success') {
                         this.purchasesPagination = response.data[1];
@@ -196,7 +207,9 @@ export default {
             }
         },
         applyFilters() {
-            axios.get(this.buildQueryParams())
+            this.searchMode = false;
+            this.filtered = true;
+            axios.get(this.buildQueryParams(1))
                 .then(response => {
                     if (response.data[0] === 'success') {
                         this.purchasesPagination = response.data[1];
@@ -205,21 +218,34 @@ export default {
                     }
                 });
         },
-        buildQueryParams() {
-            let url = '/admin/purchases';
-            if (this.startDate != null && this.startDate !== '') {
-                url += '?dateFrom=' + this.startDate;
+        loadFiltered(page = 1) {
+            axios.get(this.buildQueryParams(page))
+                .then(response => {
+                    if (response.data[0] === 'success') {
+                        this.purchasesPagination = response.data[1];
+                        this.purchases = response.data[1].data;
+                        this.pageIsLoading = false;
+                    }
+                });
+        },
+        buildQueryParams(page) {
+            const queryParams = [];
+
+            if (this.startDate) {
+                queryParams.push(`dateFrom=${this.startDate}`);
             }
-            if (this.endDate != null && this.endDate !== '') {
-                if (this.startDate != null && this.startDate !== '') {
-                    url += '&dateTo=' + this.endDate;
-                } else {
-                    url += '?dateTo=' + this.endDate
-                }
+
+            if (this.endDate) {
+                queryParams.push(`dateTo=${this.endDate}`);
             }
-            return url;
+
+            queryParams.push(`page=${page}`);
+
+            return '/admin/purchases' + (queryParams.length ? '?' + queryParams.join('&') : '');
         },
         removeFilters() {
+            this.searchMode = false;
+            this.filtered = false;
             this.startDate = '';
             this.endDate = '';
             this.searchKeyword = '';

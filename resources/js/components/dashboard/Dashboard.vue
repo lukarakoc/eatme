@@ -1,7 +1,13 @@
 <template>
     <div class="col-12">
         <div class="container-fluid">
-
+            <div class="row">
+                <div class="alert alert-warning alert-dismissible" style="width: 100%; margin: 15px;">
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                    <h5><i class="icon fas fa-exclamation-triangle"></i> Aplikacija u Beta verziji!</h5>
+                    Aplikacija je u Beta verziji i neke funkcionalnosti su još uvijek u izradi!
+                </div>
+            </div>
             <div class="row">
 
                 <div class="col-lg-3 col-6">
@@ -83,7 +89,6 @@
     </div>
 </template>
 <script>
-import {EventBus, swalError, swalSuccess} from "../../main";
 
 export default {
     name: 'Dashboard',
@@ -98,6 +103,7 @@ export default {
     },
     mounted() {
         this.loadDashboardData();
+        this.$emit('loadBreadcrumbLink', {url: '/', pageName: 'Početna'});
     },
     methods: {
         loadDashboardData() {

@@ -20,7 +20,7 @@ class GroceryController extends Controller
 
     public function getGroceries(): JsonResponse
     {
-        $groceries = Grocery::orderBy('id', 'desc')->paginate(20);
+        $groceries = Grocery::orderBy('id', 'asc')->paginate(20);
         return response()->json(['success', $groceries]);
     }
 

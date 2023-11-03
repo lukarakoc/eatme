@@ -26,11 +26,11 @@
         <!-- Main Sidebar Container -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <!-- Brand Logo -->
-            <router-link class="brand-link" :to="{ path: '/' }" style="text-align: center;">
-                <span class="brand-text font-weight-light">
-                    <img :src="resolveLogoPath" alt="">
-                </span>
-            </router-link>
+<!--            <router-link class="brand-link" :to="{ path: '/' }" style="text-align: center;">-->
+<!--                <span class="brand-text font-weight-light">-->
+<!--                    <img :src="resolveLogoPath" alt="">-->
+<!--                </span>-->
+<!--            </router-link>-->
 
             <!-- Sidebar -->
             <div class="sidebar">
@@ -50,6 +50,13 @@
                         data-accordion="false" v-show="userRole === 'Admin'">
                         <!-- Add icons to the links using the .nav-icon class
                              with font-awesome or any other icon font library -->
+
+                        <li class="nav-item">
+                            <router-link class="nav-link" :to="{ path: '/' }">
+                                <i class="fas fa-home nav-icon"></i>
+                                <p>Početna</p>
+                            </router-link>
+                        </li>
 
                         <li class="nav-item">
                             <router-link class="nav-link" :to="{ path: '/groceries' }">

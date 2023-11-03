@@ -91,13 +91,23 @@
                     <span slot="prev-nav">Prethodna</span>
                     <span slot="next-nav">Sledeća</span>
                 </pagination>
-                <pagination v-show="!searchMode"
+                <pagination v-show="!searchMode && !filtered"
                             class="mt-2"
                             align="right"
                             show-disabled
                             :data="expensesPagination"
                             :limit="1"
                             @pagination-change-page="loadExpenses">
+                    <span slot="prev-nav">Prethodna</span>
+                    <span slot="next-nav">Sledeća</span>
+                </pagination>
+                <pagination v-show="!searchMode && filtered"
+                            class="mt-2"
+                            align="right"
+                            show-disabled
+                            :data="expensesPagination"
+                            :limit="1"
+                            @pagination-change-page="loadFiltered">
                     <span slot="prev-nav">Prethodna</span>
                     <span slot="next-nav">Sledeća</span>
                 </pagination>
@@ -126,6 +136,7 @@ export default {
             endDate: '',
             pageIsLoading: true,
             searchMode: false,
+            filtered: false,
             searchKeyword: '',
             byType: '',
             types: [],
@@ -135,7 +146,7 @@ export default {
     },
     methods: {
         loadExpenses(page = 1) {
-            axios.get('/admin/expenses')
+            axios.get(`/admin/expenses?page=${page}`)
                 .then(response => {
                     if (response.data[0] === 'success') {
                         this.expensesPagination = response.data[1];
@@ -189,18 +200,29 @@ export default {
                 })
         },
         loadSearchedExpenses(page = 1) {
-            axios.get(`/admin/expenses/${this.searchKeyword}/search?page=${page}`)
-                .then(response => {
-                    if (response.data[0] === "success") {
-                        this.expensesPagination = response.data[1];
-                        this.expenses = response.data[1].data;
-                    }
-                });
+            if (this.searchKeyword !== null && this.searchKeyword !== '') {
+                axios.get(`/admin/expenses/${this.searchKeyword}/search?page=${page}`)
+                    .then(response => {
+                        if (response.data[0] === "success") {
+                            this.expensesPagination = response.data[1];
+                            this.expenses = response.data[1].data;
+                        }
+                    });
+            } else {
+                axios.get(this.buildQueryParams(page))
+                    .then(response => {
+                        if (response.data[0] === 'success') {
+                            this.expensesPagination = response.data[1];
+                            this.expenses = response.data[1].data;
+                            this.pageIsLoading = false;
+                        }
+                    });
+            }
         },
-        searchExpenses() {
+        searchExpenses(page = 1) {
             if (!(this.searchKeyword === '')) {
                 this.searchMode = true;
-                axios.get(`/admin/expenses/${this.searchKeyword}/search`)
+                axios.get(`/admin/expenses/${this.searchKeyword}/search?page=${page}`)
                     .then(response => {
                         if (response.data[0] === "success") {
                             this.expensesPagination = response.data[1];
@@ -213,7 +235,9 @@ export default {
             }
         },
         applyFilters() {
-            axios.get(this.buildQueryParams())
+            this.searchMode = false;
+            this.filtered = true;
+            axios.get(this.buildQueryParams(1))
                 .then(response => {
                     if (response.data[0] === 'success') {
                         this.expensesPagination = response.data[1];
@@ -222,7 +246,18 @@ export default {
                     }
                 });
         },
-        buildQueryParams() {
+        loadFiltered(page = 1) {
+            axios.get(this.buildQueryParams(page))
+                .then(response => {
+                    if (response.data[0] === 'success') {
+                        this.expensesPagination = response.data[1];
+                        this.expenses = response.data[1].data;
+                        this.pageIsLoading = false;
+                    }
+                });
+        },
+        buildQueryParams(page) {
+            console.log(page);
             const queryParams = [];
 
             if (this.startDate) {
@@ -237,9 +272,13 @@ export default {
                 queryParams.push(`type=${this.byType.id}`);
             }
 
+            queryParams.push(`page=${page}`);
+
             return '/admin/expenses' + (queryParams.length ? '?' + queryParams.join('&') : '');
         },
         removeFilters() {
+            this.searchMode = false;
+            this.filtered = false;
             this.startDate = '';
             this.endDate = '';
             this.searchKeyword = '';
